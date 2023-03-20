@@ -6,15 +6,6 @@ const colors = require("colors");
 
 class Rules {
   constructor(moves) {
-    if (!this.isValidMoves(moves)) {
-      if (moves.length < 3) {
-        throw new Error("Number of moves must be greater than or equal to 3".red);
-      } else if (moves.length % 2 === 0) {
-        throw new Error("Number of moves must be odd".red);
-      } else if (new Set(moves).size !== moves.length) {
-        throw new Error("Duplicate moves are not allowed".red);
-      }
-    }
     this.moves = moves;
   }
 
@@ -69,19 +60,34 @@ class Game {
   }
 
   start() {
+    const { isValidMoves, moves } = this.rules;
+
+    if (!isValidMoves(moves)) {
+      if (moves.length < 3) {
+        console.error('Please enter at least 3 moves'.red);
+      } else if (moves.length % 2 === 0) {
+        console.error('Please enter an odd number of moves'.red);
+      } else if (new Set(moves).size !== moves.length) {
+        console.error('Please remove duplicates moves'.red);
+      }
+      this.rl.close();
+      return;
+    }
+
     const availableMoves = this.getTable();
-    const exitOption = "0 - exit";
-    const helpOption = "? - help";
+    const exitOption = '0 - exit';
+    const helpOption = '? - help';
 
     console.log(`Available moves:\n${availableMoves}\n${exitOption}\n${helpOption}`);
 
-    this.rl.question("Enter your move: ", (userInput) => {
-      if (userInput === "0") {
-        console.log("See you!");
+    this.rl.question('Enter your move: ', (userInput) => {
+      if (userInput === '0') {
+        console.log('See you!');
         this.rl.close();
         return;
       }
-      if (userInput === "?") {
+
+      if (userInput === '?') {
         const winningMoves = this.getWinningTable();
         console.log(`Winning moves:\n${winningMoves}\n${exitOption}\n${helpOption}`);
         this.start();
@@ -89,8 +95,9 @@ class Game {
       }
 
       const isValidInput = this.isValidUserInput(userInput);
+
       if (!isValidInput) {
-        console.log(`Invalid input. Please enter a number between 1 and ${this.rules.moves.length}`);
+        console.error(`Invalid input. Please enter a number between 1 and ${this.rules.moves.length}`);
         this.start();
         return;
       }
