@@ -21,7 +21,10 @@ class Rules {
     const moveDifference = (moveCount - 1) / 2;
     const nextMoves = [...this.moves.slice(userMoveIndex + 1), ...this.moves.slice(0, userMoveIndex)];
     const winningMoves = nextMoves.slice(0, moveDifference);
-    return  userMoveIndex === computerMoveIndex ? "draw": winningMoves.includes(this.moves[computerMoveIndex]) ? "win" : "lose";
+    if (userMoveIndex === computerMoveIndex) {
+      return "draw"
+    }
+    return  winningMoves.includes(this.moves[computerMoveIndex]) ? "win" : "lose";
   }
 }
 
@@ -116,16 +119,19 @@ class Game {
     const result = this.rules.determineWinner(userMoveIndex, computerMoveIndex);
     const message = `User move: ${this.rules.moves[userMoveIndex]}\nComputer move: ${this.rules.moves[computerMoveIndex]}`;
 
-    if (result === "win") {
-      console.log("You win".green);
-      console.log(`HMAC key: ${this.getHmacKey()}`);
-    } else if (result === "lose") {
-      console.log("You lose!".red);
-      console.log(`HMAC key: ${this.getHmacKey()}`);
-    } else {
-      console.log("Draw!".yellow);
+    switch (result) {
+      case "win":
+        console.log("You win".green);
+        console.log(`HMAC key: ${this.getHmacKey()}`);
+        break;
+      case "lose":
+        console.log("You lose!".red);
+        console.log(`HMAC key: ${this.getHmacKey()}`);
+        break;
+      default:
+        console.log("Draw!".yellow);
+        break;
     }
-
     console.log(`HMAC: ${this.hmac.generate(message)}`);
   }
 }
