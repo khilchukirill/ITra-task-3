@@ -7,13 +7,19 @@ const colors = require("colors");
 class Rules {
   constructor(moves) {
     if (!this.isValidMoves(moves)) {
-      throw new Error("Number of moves must be odd and greater than or equal to 3");
+      if (moves.length < 3) {
+        throw new Error("Number of moves must be greater than or equal to 3".red);
+      } else if (moves.length % 2 === 0) {
+        throw new Error("Number of moves must be odd".red);
+      } else if (new Set(moves).size !== moves.length) {
+        throw new Error("Duplicate moves are not allowed".red);
+      }
     }
     this.moves = moves;
   }
 
   isValidMoves(moves) {
-    return moves.length % 2 !== 0 && moves.length >= 3;
+    return moves.length % 2 !== 0 && moves.length >= 3 && new Set(moves).size == moves.length;
   }
 
   determineWinner(userMoveIndex, computerMoveIndex) {
